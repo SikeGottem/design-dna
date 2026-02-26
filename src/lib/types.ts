@@ -109,3 +109,39 @@ export interface BoardSave {
 }
 
 export type DesignType = "all" | "website" | "poster" | "packaging" | "logo" | "ui" | "illustration" | "other";
+
+// Moodboard types
+export interface MoodboardItem {
+  id: string;
+  type: 'image' | 'text' | 'color';
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  rotation?: number;
+  zIndex: number;
+  saveId?: string;
+  imageUrl?: string;
+  text?: string;
+  color?: string;
+  fontSize?: number;
+}
+
+export interface CanvasData {
+  items: MoodboardItem[];
+  width: number;
+  height: number;
+  background: string;
+}
+
+export interface Moodboard {
+  id: string;
+  user_id: string;
+  name: string;
+  description: string | null;
+  canvas_data: CanvasData;
+  thumbnail_url: string | null;
+  is_public: boolean;
+  created_at: string;
+  updated_at: string;
+}
