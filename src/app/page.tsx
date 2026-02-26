@@ -66,7 +66,7 @@ export default function LandingPage() {
       </nav>
 
       {/* Hero */}
-      <section className="relative flex min-h-[85vh] flex-col items-center justify-center px-6 pt-14">
+      <section className="relative flex min-h-[85vh] flex-col items-center justify-center px-4 pt-14 md:px-6">
         {/* Gradient orbs */}
         <div className="pointer-events-none absolute inset-0 overflow-hidden">
           <div className="absolute -top-40 left-1/4 h-[500px] w-[500px] rounded-full bg-violet-600/20 blur-[120px]" />
@@ -83,7 +83,7 @@ export default function LandingPage() {
             <Sparkles className="h-3 w-3 text-violet-400" />
             AI-Powered Design Analysis
           </div>
-          <h1 className="mb-6 text-5xl font-bold leading-[1.1] tracking-tight sm:text-6xl md:text-7xl">
+          <h1 className="mb-6 text-4xl font-bold leading-[1.1] tracking-tight sm:text-5xl md:text-7xl">
             <span className="bg-gradient-to-r from-white via-white to-zinc-400 bg-clip-text text-transparent">
               Shazam for
             </span>
@@ -92,19 +92,19 @@ export default function LandingPage() {
               Design
             </span>
           </h1>
-          <p className="mx-auto mb-10 max-w-xl text-lg text-zinc-400 leading-relaxed">
+          <p className="mx-auto mb-10 max-w-xl text-base text-zinc-400 leading-relaxed md:text-lg">
             Screenshot any design. AI instantly extracts colors, fonts, and mood.
             Build a searchable library of everything that inspires you.
           </p>
-          <div className="flex items-center justify-center gap-4">
-            <Link href="/login">
-              <Button size="lg" className="bg-violet-600 px-8 text-white hover:bg-violet-500">
+          <div className="flex flex-col items-center gap-3 sm:flex-row sm:justify-center sm:gap-4">
+            <Link href="/login" className="w-full sm:w-auto">
+              <Button size="lg" className="w-full bg-violet-600 px-8 text-white hover:bg-violet-500 min-h-[48px]">
                 Try it free
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
-            <Link href="#how-it-works">
-              <Button variant="outline" size="lg" className="border-white/10 text-zinc-300 hover:bg-white/5">
+            <Link href="#how-it-works" className="w-full sm:w-auto">
+              <Button variant="outline" size="lg" className="w-full border-white/10 text-zinc-300 hover:bg-white/5 min-h-[48px]">
                 See how it works
               </Button>
             </Link>
@@ -116,7 +116,7 @@ export default function LandingPage() {
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="relative z-10 mt-16 w-full max-w-4xl"
+          className="relative z-10 mt-16 hidden w-full max-w-4xl md:block"
         >
           <div className="overflow-hidden rounded-xl border border-white/10 bg-[#141416] p-1">
             <div className="flex items-center gap-1.5 px-3 py-2">
