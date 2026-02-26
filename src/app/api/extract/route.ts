@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { openai, EXTRACTION_SYSTEM_PROMPT } from "@/lib/openai";
+import { getOpenAI, EXTRACTION_SYSTEM_PROMPT } from "@/lib/openai";
 import { createClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
@@ -23,7 +23,7 @@ export async function POST(request: Request) {
       .eq("id", saveId);
 
     // Call GPT-4o Vision
-    const response = await openai.chat.completions.create({
+    const response = await getOpenAI().chat.completions.create({
       model: "gpt-4o",
       response_format: { type: "json_object" },
       messages: [

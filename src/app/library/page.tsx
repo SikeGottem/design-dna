@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import { useEffect, useState, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
@@ -21,7 +22,7 @@ const filterChips: { label: string; value: DesignType }[] = [
   { label: "Other", value: "other" },
 ];
 
-export default function LibraryPage() {
+function LibraryContent() {
   const [saves, setSaves] = useState<Save[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<DesignType>("all");
@@ -144,5 +145,13 @@ export default function LibraryPage() {
         onComplete={handleUploadComplete}
       />
     </AppShell>
+  );
+}
+
+export default function LibraryPage() {
+  return (
+    <Suspense>
+      <LibraryContent />
+    </Suspense>
   );
 }
