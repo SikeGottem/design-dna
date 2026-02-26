@@ -1,15 +1,15 @@
-import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
-let _openai: OpenAI | null = null;
+let _genai: GoogleGenerativeAI | null = null;
 
-export function getOpenAI() {
-  if (!_openai) {
-    _openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+export function getGemini() {
+  if (!_genai) {
+    _genai = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
   }
-  return _openai;
+  return _genai;
 }
 
-export const EXTRACTION_SYSTEM_PROMPT = `You are a design analysis expert. Analyze the provided image and extract design DNA.
+export const EXTRACTION_PROMPT = `You are a design analysis expert. Analyze the provided image and extract design DNA.
 
 Respond ONLY with valid JSON matching this schema:
 {
@@ -50,4 +50,6 @@ Rules:
 - Mood tags: 3-8 single-word descriptors for the emotional feel. Think: how would a designer search for this?
 - Style tags: Visual technique descriptors (flat, gradient, illustrated, photographic, etc.)
 - Be precise with color hex values. Use the actual pixel colors, not approximations.
-- Consider whether this is a photograph OF a design (adjust for lighting/angle) or a direct digital screenshot (colors are pixel-accurate).`;
+- Consider whether this is a photograph OF a design (adjust for lighting/angle) or a direct digital screenshot (colors are pixel-accurate).
+
+Extract the design DNA from this image. Respond with ONLY the JSON, no markdown fences.`;

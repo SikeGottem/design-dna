@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
-import { ArrowLeft, FolderPlus, Trash2, Check, ChevronLeft, ChevronRight } from "lucide-react";
+import { ArrowLeft, FolderPlus, Trash2, Check, ChevronLeft, ChevronRight, RefreshCw } from "lucide-react";
 import type { Save, Board } from "@/lib/types";
 import { toast } from "sonner";
 import { motion } from "framer-motion";
@@ -24,6 +24,7 @@ export default function SaveDetailPage() {
   const [boards, setBoards] = useState<Board[]>([]);
   const [showBoards, setShowBoards] = useState(false);
   const [adjacentIds, setAdjacentIds] = useState<{ prev: string | null; next: string | null }>({ prev: null, next: null });
+  const [extracting, setExtracting] = useState(false);
 
   useEffect(() => {
     const fetchSave = async () => {
@@ -117,6 +118,26 @@ export default function SaveDetailPage() {
     );
   }
 
+  const handleRetryExtraction = async () => {
+    if (!save) return;
+    setExtracting(true);
+    try {
+      const res = await fetch("/api/extract", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ saveId: save.id, imageUrl: save.image_url }),
+      });
+      if (!res.ok) throw new Error("Extraction failed");
+      const data = await res.json();
+      setSave({ ...save, extraction_data: data.extraction, extraction_status: "complete", design_type: data.extraction.design_type, description: data.extraction.description });
+      toast.success("Extraction complete!");
+    } catch (err) {
+      console.error(err);
+      toast.error("Extraction failed — check console");
+    }
+    setExtracting(false);
+  };
+
   const extraction = save.extraction_data;
 
   return (
@@ -180,6 +201,17 @@ export default function SaveDetailPage() {
             <p className="mt-2 text-sm leading-relaxed text-zinc-300">
               {save.description || "No description"}
             </p>
+            {(!extraction || save.extraction_status !== "complete") && (
+              <Button
+                onClick={handleRetryExtraction}
+                disabled={extracting}
+                className="mt-3 w-full bg-violet-600 hover:bg-violet-500"
+                size="sm"
+              >
+                <RefreshCw className={`mr-1.5 h-3.5 w-3.5 ${extracting ? "animate-spin" : ""}`} />
+                {extracting ? "Extracting..." : "Extract Design DNA"}
+              </Button>
+            )}
           </div>
 
           <Separator className="bg-white/5" />
@@ -198,28 +230,55 @@ export default function SaveDetailPage() {
           {extraction?.fonts && extraction.fonts.length > 0 && (
             <div>
               <h3 className="mb-3 text-xs font-medium uppercase tracking-wider text-zinc-500">Typography</h3>
-              <div className="space-y-2">
-                {extraction.fonts.map((font) => (
-                  <div key={font.name} className="rounded-lg bg-white/5 p-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-zinc-200">{font.name}</span>
-                      <span className="text-xs text-zinc-500">{font.category}</span>
-                    </div>
-                    <div className="mt-1.5 flex items-center gap-3 text-xs text-zinc-500">
-                      <span>{font.weight}</span>
-                      <span>{font.usage}</span>
-                      <div className="flex items-center gap-1">
-                        <div className="h-1 w-12 overflow-hidden rounded-full bg-white/10">
-                          <div className="h-full rounded-full bg-violet-500" style={{ width: `${font.confidence * 100}%` }} />
-                        </div>
-                        <span>{Math.round(font.confidence * 100)}%</span>
+              <div className="space-y-3">
+                {extraction.fonts.map((font: any, i: number) => {
+                  const sampleText = font.sample_text || "Design DNA";
+                  const candidates = font.candidates || font.similar_fonts || [];
+
+                  return (
+                    <div key={i} className="rounded-lg bg-white/5 p-3">
+                      {/* Load all candidate fonts */}
+                      {candidates.filter((c: any) => c.url).map((c: any) => (
+                        <link key={c.name} rel="stylesheet" href={c.url} />
+                      ))}
+
+                      {/* Classification header */}
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-xs font-medium text-violet-400">{font.classification}</span>
+                        <span className="text-xs text-zinc-500">{font.usage} · {font.weight}</span>
+                      </div>
+                      {font.traits && (
+                        <p className="mb-3 text-xs text-zinc-500">{font.traits}</p>
+                      )}
+
+                      {/* Visual comparison grid */}
+                      <div className="space-y-1">
+                        <p className="text-[10px] uppercase tracking-wider text-zinc-600 mb-2">Visual comparison — pick the closest match</p>
+                        {candidates.slice(0, 6).map((candidate: any) => (
+                          <a
+                            key={candidate.name}
+                            href={candidate.googleFontsUrl || candidate.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-between rounded-md bg-white/[0.03] px-3 py-2.5 hover:bg-white/[0.06] transition-colors group"
+                          >
+                            <div className="flex-1 min-w-0">
+                              <p
+                                className="text-base text-zinc-200 truncate"
+                                style={{ fontFamily: `'${candidate.name}', sans-serif`, fontWeight: parseInt(font.weight) || 400 }}
+                              >
+                                {sampleText}
+                              </p>
+                            </div>
+                            <span className="ml-3 text-xs text-zinc-600 group-hover:text-violet-400 transition-colors shrink-0">
+                              {candidate.name} ↗
+                            </span>
+                          </a>
+                        ))}
                       </div>
                     </div>
-                    {font.alternatives && font.alternatives.length > 0 && (
-                      <div className="mt-1.5 text-xs text-zinc-600">Alt: {font.alternatives.join(", ")}</div>
-                    )}
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           )}
