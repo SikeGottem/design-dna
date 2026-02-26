@@ -285,6 +285,63 @@ export default function SaveDetailPage() {
 
           <Separator className="bg-white/5" />
 
+          {/* Design Critique */}
+          {extraction?.critique && (
+            <div>
+              <h3 className="mb-3 text-xs font-medium uppercase tracking-wider text-zinc-500">Design Critique</h3>
+              <div className="space-y-4">
+                {/* Scores */}
+                <div className="rounded-lg bg-white/5 p-3">
+                  <p className="mb-3 text-[10px] uppercase tracking-wider text-zinc-600">Design Scores</p>
+                  <div className="space-y-2">
+                    {Object.entries(extraction.critique.scores).map(([key, value]: [string, any]) => (
+                      <div key={key} className="flex items-center gap-3">
+                        <span className="w-20 text-xs capitalize text-zinc-400">{key}</span>
+                        <div className="flex-1 h-2 rounded-full bg-white/5 overflow-hidden">
+                          <div
+                            className="h-full rounded-full transition-all duration-500"
+                            style={{
+                              width: `${(value / 10) * 100}%`,
+                              background: value >= 8 ? 'linear-gradient(90deg, #8b5cf6, #6ee7b7)' : value >= 6 ? 'linear-gradient(90deg, #8b5cf6, #a78bfa)' : 'linear-gradient(90deg, #71717a, #a1a1aa)',
+                            }}
+                          />
+                        </div>
+                        <span className="text-xs font-medium text-zinc-300 w-5 text-right">{value}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Layout Analysis */}
+                <div className="rounded-lg bg-white/5 p-3">
+                  <p className="mb-1.5 text-[10px] uppercase tracking-wider text-zinc-600">Layout Analysis</p>
+                  <p className="text-xs leading-relaxed text-zinc-300">{extraction.critique.layout_analysis}</p>
+                </div>
+
+                {/* What Works */}
+                <div className="rounded-lg bg-white/5 p-3">
+                  <p className="mb-2 text-[10px] uppercase tracking-wider text-zinc-600">What Works</p>
+                  <ul className="space-y-1.5">
+                    {extraction.critique.what_works.map((point: string, i: number) => (
+                      <li key={i} className="flex gap-2 text-xs text-zinc-300">
+                        <span className="mt-0.5 text-violet-400">✓</span>
+                        <span className="leading-relaxed">{point}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+
+                {/* Principle */}
+                <div className="rounded-lg border border-violet-500/20 bg-violet-500/5 p-3">
+                  <p className="mb-1.5 text-[10px] uppercase tracking-wider text-violet-400">Design Principle</p>
+                  <p className="text-xs italic leading-relaxed text-zinc-300">{extraction.critique.principle}</p>
+                </div>
+              </div>
+            </div>
+          )}
+
+          <Separator className="bg-white/5" />
+
           {/* Tags */}
           {extraction && (
             <div>

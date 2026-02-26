@@ -12,12 +12,14 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Library, Plus, LogOut, FolderOpen, User } from "lucide-react";
+import { Library, Plus, LogOut, FolderOpen, User, Palette, Sparkles, Wand2 } from "lucide-react";
 import type { User as SupaUser } from "@supabase/supabase-js";
 
 const navItems = [
   { href: "/library", label: "Library", icon: Library },
   { href: "/boards", label: "Boards", icon: FolderOpen },
+  { href: "/style-guides", label: "Guides", icon: Palette },
+  { href: "/taste", label: "Taste", icon: Sparkles },
 ];
 
 export function AppShell({ children }: { children: React.ReactNode }) {

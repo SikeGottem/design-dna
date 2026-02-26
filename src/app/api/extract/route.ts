@@ -38,12 +38,27 @@ Respond ONLY with valid JSON (no markdown fences):
   "style_tags": ["flat", "geometric"]
 }
 
+6. **critique**: Analyze the design quality:
+   - **layout_analysis**: Describe the grid structure, visual hierarchy, and spacing patterns (2-3 sentences)
+   - **what_works**: 3-5 bullet points on design principles used well (contrast, alignment, repetition, proximity, whitespace, color theory, typography hierarchy)
+   - **scores**: Rate 1-10 for: layout, typography, color, hierarchy, overall
+   - **principle**: Brief explanation of the main design principle at play (1-2 sentences)
+
+Include in your JSON response:
+"critique": {
+  "layout_analysis": "string",
+  "what_works": ["string", "string", "string"],
+  "scores": { "layout": 8, "typography": 7, "color": 9, "hierarchy": 8, "overall": 8 },
+  "principle": "string"
+}
+
 Rules:
 - classification MUST be one of the listed categories. Pick the closest one.
 - traits should describe distinguishing visual features a designer would notice.
 - sample_text: copy the ACTUAL text from the image that uses this font. This is critical for visual comparison.
 - If there are multiple distinct font styles (e.g., headings vs body), list each separately.
-- Do NOT try to guess the exact font name. Just classify the style accurately.`;
+- Do NOT try to guess the exact font name. Just classify the style accurately.
+- critique scores should be honest — most designs are 5-8, not all 9-10.`;
 
 export async function POST(request: Request) {
   try {
@@ -116,6 +131,7 @@ export async function POST(request: Request) {
       fonts: fontsWithCandidates,
       mood_tags: aiResult.mood_tags || [],
       style_tags: aiResult.style_tags || [],
+      critique: aiResult.critique || null,
       confidence: {
         colors: 0.95, // Pixel-extracted = high confidence
         fonts: Math.max(...(aiResult.fonts?.map((f: any) => f.confidence) || [0])),
